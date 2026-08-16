@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horizontal Addition Practice</title>
+    <style>
+        /* Basic Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Container Styling */
+        .quiz-container {
+            max-width: 500px;
+            width: 90%;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        /* The Math Equation Display */
+        .equation-display {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+            word-wrap: break-word;
+        }
+
+        /* Input Field */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="number"] {
+            padding: 0.8rem;
+            font-size: 1.2rem;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
+            width: 100%;
+            /* Prevents auto-zoom on mobile */
+            font-size: 16px; 
+        }
+
+        input[type="number"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s ease;
+            width: 100%;
+        }
+
+        .btn-submit {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-next {
+            background-color: #95a5a6;
+            color: white;
+            display: none; /* Hidden until an answer is submitted */
+        }
+
+        .btn-next:hover {
+            background-color: #7f8c8d;
+        }
+
+        /* Feedback Message */
+        .feedback {
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-height: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .correct { color: #27ae60; }
+        .incorrect { color: #e74c3c; }
+
+        /* Mobile Adjustments */
+        @media (min-width: 480px) {
+            .input-group {
+                flex-direction: row;
+                justify-content: center;
+            }
+            .btn {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <h2>Practice of Additions with place values</h2>
+        
+        <div class="feedback" id="feedback"></div>
+        <div class="equation-display" id="equation"></div>
+        
+        <div class="input-group">
+            <input type="number" id="answer-input" placeholder="Your answer" autocomplete="off">
+            <button class="btn btn-submit" id="submit-btn" onclick="checkAnswer()">Submit</button>
+        </div>
+        
+        <button class="btn btn-next" id="next-btn" onclick="generateProblem()">Try Another Problem</button>
+        <h4>by RAJAMOULI.BOMMERA,S.A(MATHS)</h4>
+    </div>
+
+    <script>
+        let currentSum = 0;
+
+        // Function to generate a random number between a min and max
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Function to get a random number of a specific length (1 to 4 digits)
+        function getRandomNumberByDigits() {
+            const digitCount = getRandomInt(1, 4); // Randomly choose 1, 2, 3, or 4 digits
+            if (digitCount === 1) return getRandomInt(1, 9);
+            if (digitCount === 2) return getRandomInt(10, 99);
+            if (digitCount === 3) return getRandomInt(100, 999);
+            return getRandomInt(1000, 9999);
+        }
+
+        function generateProblem() {
+            // Randomly decide whether to add 3 or 4 numbers together
+            const totalNumbers = getRandomInt(3, 4);
+            const numbers = [];
+            currentSum = 0;
+
+            for (let i = 0; i < totalNumbers; i++) {
+                const num = getRandomNumberByDigits();
+                numbers.push(num);
+                currentSum += num;
+            }
+
+            // Build the equation string
+            const equationString = numbers.join(" + ") + " = ?";
+            
+            // Update the UI
+            document.getElementById('equation').innerText = equationString;
+            document.getElementById('answer-input').value = "";
+            document.getElementById('feedback').innerText = "";
+            document.getElementById('feedback').className = "feedback";
+            
+            // Reset buttons
+            document.getElementById('submit-btn').style.display = "inline-block";
+            document.getElementById('next-btn').style.display = "none";
+            document.getElementById('answer-input').disabled = false;
+            document.getElementById('answer-input').focus();
+        }
+
+        function checkAnswer() {
+            const userAnswer = parseInt(document.getElementById('answer-input').value, 10);
+            const feedbackEl = document.getElementById('feedback');
+
+            if (isNaN(userAnswer)) {
+                feedbackEl.innerText = "Please enter a number.";
+                feedbackEl.className = "feedback incorrect";
+                return;
+            }
+
+            if (userAnswer === currentSum) {
+                feedbackEl.innerText = "🎉 Excellent! That is correct.";
+                feedbackEl.className = "feedback correct";
+                
+                // Show next button, hide submit, disable input
+                document.getElementById('submit-btn').style.display = "none";
+                document.getElementById('next-btn').style.display = "inline-block";
+                document.getElementById('answer-input').disabled = true;
+            } else {
+                feedbackEl.innerText = "Not quite. Solve it once again!";
+                feedbackEl.className = "feedback incorrect";
+            }
+        }
+
+        // Allow pressing "Enter" to submit the answer
+        document.getElementById('answer-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                if (document.getElementById('submit-btn').style.display !== "none") {
+                    checkAnswer();
+                } else {
+                    generateProblem();
+                }
+            }
+        });
+
+        // Initialize the first problem when the page loads
+        window.onload = generateProblem;
+    </script>
+
+</body>
+</html>
