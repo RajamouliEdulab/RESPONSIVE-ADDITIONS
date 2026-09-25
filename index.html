@@ -139,6 +139,16 @@
     <script>
         let currentSum = 0;
 
+        // Function to speak text using the Web Speech API
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech so sentences don't overlap
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
         // Function to generate a random number between a min and max
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -195,6 +205,9 @@
                 feedbackEl.innerText = "🎉 Excellent! That is correct.";
                 feedbackEl.className = "feedback correct";
                 
+                // Play correct audio
+                speak("Congratulations, you are correct");
+                
                 // Show next button, hide submit, disable input
                 document.getElementById('submit-btn').style.display = "none";
                 document.getElementById('next-btn').style.display = "inline-block";
@@ -202,6 +215,9 @@
             } else {
                 feedbackEl.innerText = "Not quite. Solve it once again!";
                 feedbackEl.className = "feedback incorrect";
+                
+                // Play incorrect audio
+                speak("Not quite. Solve it once again");
             }
         }
 
